@@ -1,0 +1,42 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ===== Virtual Environment =====
+venv/
+.venv/
+env/
+.env/
+
+# ===== IDE / Editor =====
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ===== Training Outputs =====
+outputs/checkpoints/*.pth
+outputs/plots/*.png
+training.log
+
+# ===== Dataset (large files) =====
+Dataset/
+*.csv
+*.zip
+*.tar.gz
+
+# ===== Jupyter =====
+.ipynb_checkpoints/
+
+# ===== OS =====
+.DS_Store
+*.log
