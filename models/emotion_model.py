@@ -14,6 +14,7 @@ def build_emotion_model(
     freeze_backbone: bool = True,
     unfreeze_last_n_blocks: int = 2,
 ) -> nn.Module:
+    # Load EfficientNet-B0 with ImageNet weights for transfer learning
     weights = models.EfficientNet_B0_Weights.IMAGENET1K_V1 if pretrained else None
     model = models.efficientnet_b0(weights=weights)
     logger.info(
@@ -21,9 +22,11 @@ def build_emotion_model(
     )
 
     if freeze_backbone:
+        # Freeze all parameters first
         for param in model.parameters():
             param.requires_grad = False
 
+        # Then unfreeze last N feature blocks for fine-tuning
         feature_blocks = list(model.features.children())
         total_blocks = len(feature_blocks)
         unfreeze_from = max(0, total_blocks - unfreeze_last_n_blocks)
@@ -38,6 +41,7 @@ def build_emotion_model(
             total_blocks,
         )
 
+    # Replace classifier head: 1280 → 256 → num_classes
     in_features = model.classifier[1].in_features
     model.classifier = nn.Sequential(
         nn.Dropout(p=0.3, inplace=True),
@@ -57,6 +61,7 @@ def build_emotion_model(
 
 
 def count_parameters(model: nn.Module) -> dict:
+    """Count total, trainable, and frozen parameters in the model."""
     total = sum(p.numel() for p in model.parameters())
     trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
     return {

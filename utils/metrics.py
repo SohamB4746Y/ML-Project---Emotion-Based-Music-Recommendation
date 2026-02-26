@@ -23,6 +23,7 @@ def compute_metrics(
     y_pred: Sequence[int],
     class_names: Optional[List[str]] = None,
 ) -> Dict[str, float]:
+    """Compute classification metrics: accuracy, precision, recall, F1."""
     accuracy = accuracy_score(y_true, y_pred)
     precision = precision_score(y_true, y_pred, average="macro", zero_division=0)
     recall = recall_score(y_true, y_pred, average="macro", zero_division=0)
@@ -49,6 +50,7 @@ def plot_confusion_matrix(
     class_names: List[str],
     save_path: str = "outputs/plots/confusion_matrix.png",
 ) -> None:
+    """Generate and save confusion matrix plots (counts + normalized)."""
     cm = confusion_matrix(y_true, y_pred)
     cm_normalised = cm.astype("float") / (cm.sum(axis=1, keepdims=True) + 1e-9)
 

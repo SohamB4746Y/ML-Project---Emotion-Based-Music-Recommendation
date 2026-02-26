@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Main training script for Dhwani FER model."""
 
 from __future__ import annotations
 
@@ -21,6 +22,7 @@ from utils.dataloader import get_dataloaders
 from utils.metrics import compute_metrics, plot_confusion_matrix
 from utils.trainer import train
 
+# Logging configuration
 LOG_FORMAT = "[%(asctime)s] %(levelname)-8s %(name)s — %(message)s"
 logging.basicConfig(
     level=logging.INFO,
@@ -90,6 +92,7 @@ def plot_loss_curves(
     val_losses: list[float],
     save_path: str,
 ) -> None:
+    """Plot training and validation loss curves."""
     epochs_range = range(1, len(train_losses) + 1)
     fig, ax = plt.subplots(figsize=(8, 5))
     ax.plot(epochs_range, train_losses, "o-", label="Train Loss", linewidth=2)
@@ -125,9 +128,11 @@ def plot_accuracy_curve(
 def main() -> None:
     args = parse_args()
 
+    # Create output directories
     Path(args.checkpoint_dir).mkdir(parents=True, exist_ok=True)
     Path(args.plots_dir).mkdir(parents=True, exist_ok=True)
 
+    # Device detection: CUDA > MPS (Apple Metal) > CPU
     if torch.cuda.is_available():
         device = torch.device("cuda")
         logger.info("CUDA GPU detected: %s", torch.cuda.get_device_name(0))
@@ -145,6 +150,7 @@ def main() -> None:
         batch_size=args.batch_size,
     )
 
+    # Dynamically detect emotion classes from dataset folder structure
     class_names = train_ds.classes
     num_classes = len(class_names)
     logger.info("Detected %d emotion classes: %s", num_classes, class_names)
@@ -157,12 +163,14 @@ def main() -> None:
     model = model.to(device)
     print_model_summary(model)
 
+    # Loss function with label smoothing for regularization
     criterion = nn.CrossEntropyLoss(label_smoothing=0.1)
     optimizer = Adam(
         filter(lambda p: p.requires_grad, model.parameters()),
         lr=args.lr,
         weight_decay=args.weight_decay,
     )
+    # Reduce LR when validation loss plateaus
     scheduler = ReduceLROnPlateau(
         optimizer, mode="min", factor=0.5, patience=2,
     )

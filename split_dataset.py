@@ -5,16 +5,19 @@ import random
 import shutil
 import sys
 
-SEED = 42
-TRAIN_RATIO = 0.80
+# Configuration
+SEED = 42  # For reproducible splits
+TRAIN_RATIO = 0.80  # 80% train, 20% validation
 SOURCE_DIR = "processed_data"
 OUTPUT_DIR = "Dataset"
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".webp"}
 
 
 def split_dataset(source_dir, output_dir, train_ratio, seed):
+    """Split dataset from source_dir into train/val with deterministic seed."""
     random.seed(seed)
 
+    # Validate source directory exists
     if not os.path.isdir(source_dir):
         print(f"[ERROR] Source directory not found: {os.path.abspath(source_dir)}")
         sys.exit(1)
@@ -22,6 +25,7 @@ def split_dataset(source_dir, output_dir, train_ratio, seed):
     train_root = os.path.join(output_dir, "train")
     val_root = os.path.join(output_dir, "val")
 
+    # Clean up existing output directories (safe for reruns)
     if os.path.exists(train_root):
         shutil.rmtree(train_root)
         print(f"[INFO] Deleted existing directory: {train_root}")

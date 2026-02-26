@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class TrainingHistory:
+    """Store training metrics across epochs."""
     train_loss: List[float] = field(default_factory=list)
     val_loss: List[float] = field(default_factory=list)
     val_accuracy: List[float] = field(default_factory=list)
@@ -23,12 +24,13 @@ class TrainingHistory:
 
 
 class EarlyStopping:
+    """Stop training if metric doesn't improve after patience epochs."""
     def __init__(
         self, patience: int = 5, min_delta: float = 1e-4, mode: str = "min"
     ):
         self.patience = patience
         self.min_delta = min_delta
-        self.mode = mode
+        self.mode = mode  # "min" for loss, "max" for accuracy
         self.counter = 0
         self.best_score: Optional[float] = None
         self.should_stop = False
@@ -63,6 +65,7 @@ def train_one_epoch(
     scaler: Optional[GradScaler] = None,
     max_grad_norm: float = 1.0,
 ) -> float:
+    """Train for one epoch. Returns average loss."""
     model.train()
     running_loss = 0.0
     num_batches = 0
@@ -74,6 +77,7 @@ def train_one_epoch(
 
         optimizer.zero_grad(set_to_none=True)
 
+        # Use mixed precision if scaler provided (CUDA only)
         if scaler is not None:
             with autocast(device_type="cuda"):
                 outputs = model(images)
@@ -105,6 +109,7 @@ def validate(
     criterion: nn.Module,
     device: torch.device,
 ) -> Tuple[float, float, List[int], List[int]]:
+    """Validate model. Returns (avg_loss, accuracy, true_labels, predictions)."""
     model.eval()
     running_loss = 0.0
     correct = 0
@@ -141,6 +146,7 @@ def save_checkpoint(
     val_acc: float,
     path: str,
 ) -> None:
+    """Save model checkpoint with training state."""
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     torch.save(
         {

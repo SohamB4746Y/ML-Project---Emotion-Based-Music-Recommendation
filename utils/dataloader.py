@@ -9,6 +9,7 @@ from torchvision import datasets, transforms
 
 logger = logging.getLogger(__name__)
 
+# ImageNet normalization constants
 IMAGENET_MEAN = [0.485, 0.456, 0.406]
 IMAGENET_STD = [0.229, 0.224, 0.225]
 
@@ -16,6 +17,7 @@ INPUT_SIZE = 224
 
 
 def get_train_transforms() -> transforms.Compose:
+    """Training augmentation: resize, random crop, flip, rotation, color jitter."""
     return transforms.Compose(
         [
             transforms.Resize(256),
@@ -33,6 +35,7 @@ def get_train_transforms() -> transforms.Compose:
 
 
 def get_val_transforms() -> transforms.Compose:
+    """Validation transforms: resize, center crop, no augmentation."""
     return transforms.Compose(
         [
             transforms.Resize(256),
@@ -44,7 +47,9 @@ def get_val_transforms() -> transforms.Compose:
 
 
 def _optimal_workers() -> int:
+    """Determine optimal DataLoader workers based on CPU count and OS."""
     cpu_count = os.cpu_count() or 1
+    # MacOS performs better with fewer workers
     if platform.system() == "Darwin":
         return min(2, cpu_count)
     return min(4, cpu_count)
@@ -56,6 +61,7 @@ def get_dataloaders(
     num_workers: Optional[int] = None,
     pin_memory: bool = True,
 ) -> Tuple[DataLoader, DataLoader, datasets.ImageFolder, datasets.ImageFolder]:
+    # Validate dataset structure
     data_path = Path(data_dir)
     train_dir = data_path / "train"
     val_dir = data_path / "val"
@@ -65,6 +71,7 @@ def get_dataloaders(
     if not val_dir.is_dir():
         raise FileNotFoundError(f"Validation directory not found: {val_dir}")
 
+    # Load datasets using ImageFolder (auto-detects classes from folder names)
     train_dataset = datasets.ImageFolder(
         root=str(train_dir), transform=get_train_transforms()
     )
