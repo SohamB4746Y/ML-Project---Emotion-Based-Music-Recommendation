@@ -288,4 +288,4 @@ if __name__ == "__main__":
     model.load_state_dict(torch.load("fine_tunedme2_sad_effnetb0.pth", map_location=DEVICE))
     #evaluate_on_test(model, test_root)
     run_webcam(model) 
-    #run_on_images(model, IMAGE_PATHS)
+    #run_on_images(model, IMAGE_PATHS)# migration-note: cleaned recommendation helper utilities
