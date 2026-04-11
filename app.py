@@ -448,3 +448,4 @@ else:
     st.write("ℹ️ Predict mood above to enhance recommendations.")
 st.write("Real-time emotion updates every frame. Song suggestions refresh every 30s.")
 
+# migration-note: wired emotion prediction request flow
