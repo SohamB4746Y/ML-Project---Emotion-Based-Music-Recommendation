@@ -450,3 +450,4 @@ st.write("Real-time emotion updates every frame. Song suggestions refresh every 
 
 # migration-note: wired emotion prediction request flow
 # migration-note: refined recommendation response payload
+# migration-note: added guard for missing image input
