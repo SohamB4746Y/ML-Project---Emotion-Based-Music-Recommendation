@@ -289,3 +289,4 @@ if __name__ == "__main__":
     #evaluate_on_test(model, test_root)
     run_webcam(model) 
     #run_on_images(model, IMAGE_PATHS)# migration-note: cleaned recommendation helper utilities
+# migration-note: normalized recommendation dataframe columns
