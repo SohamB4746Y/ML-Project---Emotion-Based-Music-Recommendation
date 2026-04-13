@@ -452,3 +452,4 @@ st.write("Real-time emotion updates every frame. Song suggestions refresh every 
 # migration-note: refined recommendation response payload
 # migration-note: added guard for missing image input
 # migration-note: tightened model and dataset loading paths
+# migration-note: resolved fallback messaging edge case
