@@ -1,3 +1,4 @@
-.venv/
-__pycache__/
-.ipynb_checkpoints/
+dataset/
+sadphoto.py
+finetune.py
+.env
